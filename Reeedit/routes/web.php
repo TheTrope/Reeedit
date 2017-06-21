@@ -14,3 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('test', ['as' => 'about', 'uses' => 'MainController@test']);
