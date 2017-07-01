@@ -15,8 +15,17 @@ use Illuminate\Support\Facades\Input;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/welcome', function () {
+    return view('welcome');
+});
 
+Route::get('/signin', function () {
+    return view('signin');
+});
 
 Route::get('test', ['as' => 'about', 'uses' => 'MainController@test']);
 
 Route::post('/login', 'UserController@login');
+Route::post('/signin', 'UserController@signin');
+Route::get('/subs', 'ThreadController@subsPage');
+Route::get('/thread/{id}', 'ThreadController@viewThreadPage');
