@@ -5,7 +5,7 @@
 <div class="row">
   <div class="card-panel">
     @foreach ($subs as $sub)
-    <a href="/thread/{{ $sub->id }}">
+    <a href="/threads/{{ $sub->id }}">
       <div class="card blue-grey darken-1">
         <div class="card-content white-text">
 

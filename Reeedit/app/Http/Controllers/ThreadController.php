@@ -13,11 +13,13 @@ class ThreadController extends Controller
     $subs = \App\Models\Thread::GetSubs();
     return view("subs")->with("subs", $subs);
   }
-  public function threadsPage(Request $request) {
+  public function threadsPage($idsubs) {
+    $data = \App\Models\Thread::GetThreads($idsubs);
+    return view("threads")->with("data", $data);
   }
   public function viewThreadPage($id) {
     $thread = \App\Models\Thread::GetThreadById($id);
-    return view('thread')->with('viewThread', $thread);
+    return view('viewThread')->with('thread', $thread);
   }
 
 }
