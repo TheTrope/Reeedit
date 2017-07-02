@@ -55,10 +55,10 @@
       <i class="mylogo large material-icons">question_answer</i>
     </li>
     <li class="bold">
-      <a href="welcome">Index</a>
-      <a href="signin">Sign In</a>
-      <a href="subs">Subs</a>
-      <a href="signin">Top Threads</a>
+      <a href="/welcome">Index</a>
+      <a href="/signin">Sign In</a>
+      <a href="/subs">Subs</a>
+      <a href="/signin">Top Threads</a>
 
     </li>
 
@@ -103,13 +103,13 @@
         <div class="nav-wrapper">
           <div class="col s12">
             @if(View::hasSection('title1'))
-            <a href="#!" class="breadcrumb">@yield('title1')</a>
-            @if(View::hasSection('title2'))
-            <a href="#!" class="breadcrumb">@yield('title2')</a>
-            @if(View::hasSection('title3'))
-            <a href="#!" class="breadcrumb">@yield('title3')</a>
-            @endif
-            @endif
+              <a href="@yield('titlelink1', '#')" class="breadcrumb">@yield('title1')</a>
+              @if(View::hasSection('title2'))
+                <a href="#!" class="breadcrumb">@yield('title2')</a>
+                @if(View::hasSection('title3'))
+                  <a href="#!" class="breadcrumb">@yield('title3')</a>
+                @endif
+              @endif
             @else
             <a href="#!" class="breadcrumb">Unknown</a>
             @endif

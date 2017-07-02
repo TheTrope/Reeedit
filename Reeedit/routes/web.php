@@ -28,4 +28,4 @@ Route::get('test', ['as' => 'about', 'uses' => 'MainController@test']);
 Route::post('/login', 'UserController@login');
 Route::post('/signin', 'UserController@signin');
 Route::get('/subs', 'ThreadController@subsPage');
-Route::get('/thread/{id}', 'ThreadController@viewThreadPage');
+Route::get('/threads/{id}', 'ThreadController@threadsPage');
