@@ -27,6 +27,40 @@ use Illuminate\Support\Facades\DB;
 
     }
 
+    public static function GetThreadById($id){
+      function orderAnswers($start, $answers, $depth){
+        $ret = [];
+        for ($i = 0; $i < count($answers); ++$i){
+          if (!$answers[$i])
+            continue;
+          $a = $answers[$i];
+          if ($a->fromAnswerId == $start){
+            $answers[$i] = null;
+            array_push($ret, ['data' => $a, 'dept' => $depth]);
+            $rec = orderAnswers($a->id, $answers, $depth + 1);
+            $ret = array_merge($ret, $rec);
+          }
+        }
+        return $ret;
+      }
+      $thread = DB::table('threads')
+                  ->join('answers', 'threads.id', '=', 'answers.threadId')
+                  ->select('threads.*','answers.id as start', 'answers.fromAnswerId')
+                  ->where('answers.fromAnswerId', '=', NULL)
+                  ->where('threads.id', '=', $id)
+                  ->get();
+      var_dump($thread[0]);
+      $answers = DB::select(" select  *
+      from    (select * from answers
+      order by fromAnswerId, id) sorted,
+      (select @pv := :start) initialisation
+      where   find_in_set(fromAnswerId, @pv) > 0
+      and     @pv := concat(@pv, ',', id)", ["start" => $thread[0]->start]);
+      $order = orderAnswers($thread[0]->start, $answers, 0);
+      $result = ['thread' => $thread[0], 'answers' => $order];
+    }
+
+
 }
 
 ?>

@@ -29,3 +29,4 @@ Route::post('/login', 'UserController@login');
 Route::post('/signin', 'UserController@signin');
 Route::get('/subs', 'ThreadController@subsPage');
 Route::get('/threads/{id}', 'ThreadController@threadsPage');
+Route::get('/thread/{id}', 'ThreadController@viewThreadPage');
