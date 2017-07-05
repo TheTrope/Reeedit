@@ -4,7 +4,10 @@
 @section('content')
 <div class="row">
   <div class="card-panel">
-    Welcome on Threaddy
+    See you later
+    <script type="text/javascript">
+        window.location.href = '/welcome';
+    </script>
   </div>
 </div>
 @stop
