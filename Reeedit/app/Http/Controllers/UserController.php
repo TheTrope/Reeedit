@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
+use Session;
 
 class UserController extends Controller
 {
@@ -23,9 +24,9 @@ class UserController extends Controller
       $username = $request->input("username");
       $password = $request->input("password");
       if (\App\Models\User::tryLogin($username, $password))
-        return view('welcome')->with('carderror', false);
+        return view('welcome')->with('carderror', "You are logged in");
       else {
-        return view('welcome')->with('carderror', true);
+        return view('welcome')->with('carderror', "Login failed");
       }
 
     }

@@ -86,11 +86,7 @@
     @if (isset($carderror))
     <div class="row">
       <div class="badge errorbadge red lighten-2">
-        @if($carderror)
-        Wrong identifiers
-        @else
-        You are logged in
-        @endif
+        {{ $carderror }}
       </div>
     </div>
     @endif

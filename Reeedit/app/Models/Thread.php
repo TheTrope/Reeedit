@@ -29,8 +29,7 @@ use Illuminate\Support\Facades\DB;
 
     }
 
-    public static function GetThreadById($id){
-      function orderAnswers($start, $answers, $depth){
+    public static function orderAnswers($start, $answers, $depth){
         $ret = [];
         for ($i = 0; $i < count($answers); ++$i){
           if (!$answers[$i])
@@ -39,23 +38,21 @@ use Illuminate\Support\Facades\DB;
           if ($a->fromAnswerId == $start){
             $answers[$i] = null;
             array_push($ret, ['data' => $a, 'depth' => $depth]);
-            $rec = orderAnswers($a->id, $answers, $depth + 1);
+            $rec = Thread::orderAnswers($a->id, $answers, $depth + 1);
             $ret = array_merge($ret, $rec);
           }
         }
         return $ret;
       }
-      $thread = DB::table('threads')
-                  ->leftjoin('subsForums', 'threads.subId', '=', 'subsForums.id')
-                  ->join('answers', 'threads.id', '=', 'answers.threadId')
-                  ->leftjoin('users', 'threads.author', '=', 'users.id')
-                  ->leftjoin('threadVotes', 'threads.id', '=', 'threadVotes.threadId')
-                  ->leftjoin('threadVotes as myVotes', 'threads.id', '=', DB::raw('threadVotes.threadId and threadVotes.userId = '. ((Session::has('user'))? Session::get('user')->id : -1 )))
-                  ->select('threads.*', 'users.username as author', 'answers.id as start', 'answers.fromAnswerId', 'subsForums.name as subName', 'answers.content', 'answers.id as startAnswer',  DB::raw('cast(sum(threadVotes.value) as signed) as votes'), DB::raw('ifnull(myVotes.value, 0) as myVote'))
-                  ->where('answers.fromAnswerId', '=', NULL)
-                  ->where('threads.id', '=', $id)
-                  ->groupBy('threads.id', 'answers.content', 'answers.id', 'myVotes.value')
-                  ->get();
+    public static function GetThreadById($id){
+      $usr = ((Session::has('user')? Session::get('user')->id : -1 ));
+      $thread = DB::select('select *, ifnull(myVotes.value, 0) as myVote from (
+        select *, cast(sum(threadVotes.value) as signed) as votes from (
+          select threads.*, users.username as tauthor, answers.id as start, answers.fromAnswerId, subsForums.name as subName, answers.content, answers.id as startAnswer from threads
+          join subsForums on threads.subId = subsForums.id join answers on threads.id = answers.threadId
+          join users on threads.author = users.id where answers.fromAnswerId is NULL and threads.id = :id) as t left join threadVotes on t.id = threadVotes.threadId group by t.id) as d join threadVotes as myVotes on d.id = myVotes.threadId and myVotes.userId = '.$usr.'
+', ["id" => $id]);
+
 
       $answers = DB::select("
       select id, content, fromAnswerId, username, createdAt, threadId, votes, ifnull(answerVotes.value, 0) as myVote
@@ -78,9 +75,24 @@ use Illuminate\Support\Facades\DB;
       ) as reallyNowItsFinalData
       left join answerVotes on reallyNowItsFinalData.id = answerVotes.answerId and answerVotes.userId = :idusr
         ", ["start" => $thread[0]->start, "idusr" => ((Session::has('user'))? Session::get('user')->id : -1 )]);
-      $order = orderAnswers($thread[0]->start, $answers, 0);
+      $order = Thread::orderAnswers($thread[0]->start, $answers, 0);
       $result = ['thread' => $thread[0], 'answers' => $order];
       return $result;
+    }
+
+    public static function threadVote($id, $val){
+      if(!Session::has('user'))
+        return false;
+      $vote = DB::insert("INSERT INTO threadVotes (userId, threadId, value) VALUES (:usr, :id, :val ) ON DUPLICATE KEY UPDATE value = :valcp;",
+      ["usr" => Session::get('user')->id, "id" => $id, "val" => $val, "valcp" => $val]);
+
+    }
+    public static function answerVote($id, $ans, $val){
+      if(!Session::has('user'))
+        return false;
+      $vote = DB::insert("INSERT INTO answerVotes (userId, answerId, value) VALUES (:usr, :ans, :val ) ON DUPLICATE KEY UPDATE value = :valcp;",
+      ["usr" => Session::get('user')->id, "ans" => $ans, "val" => $val, "valcp" => $val]);
+
     }
 
 
