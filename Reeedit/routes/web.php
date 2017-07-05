@@ -30,3 +30,7 @@ Route::post('/signin', 'UserController@signin');
 Route::get('/subs', 'ThreadController@subsPage');
 Route::get('/threads/{id}', 'ThreadController@threadsPage');
 Route::get('/thread/{id}', 'ThreadController@viewThreadPage');
+Route::get('/thread/{id}/tvoteup', 'ThreadController@threadVoteUp');
+Route::get('/thread/{id}/tvotedown', 'ThreadController@threadVoteDown');
+Route::get('/thread/{id}/votedown/{ans}', 'ThreadController@answerVoteDown');
+Route::get('/thread/{id}/voteup/{ans}', 'ThreadController@answerVoteUp');
