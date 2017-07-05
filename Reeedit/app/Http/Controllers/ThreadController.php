@@ -19,7 +19,7 @@ class ThreadController extends Controller
   }
   public function viewThreadPage($id) {
     $thread = \App\Models\Thread::GetThreadById($id);
-    return view('viewThread')->with('thread', $thread);
+    return view('viewThread')->with('data', $thread);
   }
 
 }

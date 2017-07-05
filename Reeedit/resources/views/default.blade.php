@@ -47,6 +47,9 @@
     padding: 5px;
 
   }
+  .card .card-content{
+    padding: 15px;
+  }
   </style>
 </head>
 <body>
@@ -126,10 +129,12 @@
     @if(Session::has('user'))
 
     <div class="card col s4 teal lighten-2" >
-      <div class="nav-wrapper">
-        <span class=" col breadcrumb">
-        Connected as <b>{{ Session::get('user')->username }}</b>
-        </span>
+      <div class="card-content">
+        <div class="nav-wrapper">
+          <span class=" col breadcrumb">
+          Connected as <b>{{ Session::get('user')->username }}</b>
+          </span>
+        </div>
       </div>
     </div>
     @else
