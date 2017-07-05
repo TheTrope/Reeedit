@@ -69,4 +69,8 @@ class UserController extends Controller
   public function test(){
     return view("test");
   }
+  public function logout(){
+    Session::flush();
+    return view("goodbye")->with('carderror', 'Logged out');
+  }
 }

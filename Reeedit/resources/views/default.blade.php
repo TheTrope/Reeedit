@@ -128,7 +128,7 @@
       <div class="card-content">
         <div class="nav-wrapper">
           <span class=" col breadcrumb">
-          Connected as <b>{{ Session::get('user')->username }}</b>
+          Connected as <b>{{ Session::get('user')->username }}</b> - <a href="/logout" class="white-text">Log Out</a>
           </span>
         </div>
       </div>
