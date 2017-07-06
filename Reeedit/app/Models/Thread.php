@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\DB;
                               select *, cast(sum(threadVotes.value) as signed) as votes from (
                                 select threads.*, users.username as tauthor, answers.id as start, answers.fromAnswerId,
                                 subsForums.name as subName, answers.content, answers.id as startAnswer from threads
-                                join subsForums on threads.subId = subsForums.id join answers on threads.id = answers.threadId
+                                left join subsForums on threads.subId = subsForums.id join answers on threads.id = answers.threadId
                                 left join users on threads.author = users.id where answers.fromAnswerId is NULL and threads.id = :id) as t
                               left join threadVotes on t.id = threadVotes.threadId group by t.id) as d
                             left join threadVotes as myVotes on d.id = myVotes.threadId and myVotes.userId = '.$usr.'
@@ -115,6 +115,24 @@ use Illuminate\Support\Facades\DB;
         'tid' => $tid,
         'aid' => $aid,
         'content' => $content
+      ]);
+      return $res;
+    }
+
+    public static function createThread($sid, $tn, $des){
+      $res = DB::insert('insert into threads (author, subId, name, description) values
+      (:usr, :sid, :tn, :desc)', [
+        'usr' => Session::get('user')->id,
+        'sid' => $sid,
+        'tn' => $tn,
+        'desc' => $des
+      ]);
+      if (!$res)
+        return false;
+      $res = DB::insert('insert into answers (userId, threadId) values
+      (:usr, :tid)',[
+        'usr' => Session::get('user')->id,
+        'tid' => DB::getPdo()->lastInsertId(),
       ]);
       return $res;
     }

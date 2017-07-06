@@ -25,15 +25,26 @@ Route::get('/signin', function () {
 
 Route::get('test', ['as' => 'about', 'uses' => 'MainController@test']);
 
+// Users route
 Route::post('/login', 'UserController@login');
 Route::post('/signin', 'UserController@signin');
+Route::get('/logout', 'UserController@logout');
+
+
 Route::get('/subs', 'ThreadController@subsPage');
 Route::get('/threads/{id}', 'ThreadController@threadsPage');
 Route::get('/thread/{id}', 'ThreadController@viewThreadPage');
+
+// Votes routes
 Route::get('/thread/{id}/tvoteup', 'ThreadController@threadVoteUp');
 Route::get('/thread/{id}/tvotedown', 'ThreadController@threadVoteDown');
 Route::get('/thread/{id}/votedown/{ans}', 'ThreadController@answerVoteDown');
 Route::get('/thread/{id}/voteup/{ans}', 'ThreadController@answerVoteUp');
-Route::get('/logout', 'UserController@logout');
+
+// Forms Routes
+// -- Answers
 Route::get('/answer/{tid}/{aid}', 'ThreadController@formAnswerTo');
 Route::post('/answer/{tid}/{aid}', 'ThreadController@answerTo');
+// -- Threads
+Route::get('/createthread/{sid}', 'ThreadController@formCreateThread');
+Route::post('/createthread/{sid}', 'ThreadController@createthread');

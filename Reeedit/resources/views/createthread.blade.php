@@ -1,6 +1,8 @@
 
 @extends("default")
-@section('title1', 'Answer')
+@section("title1", "Subs")
+@section("titlelinkl", "/subs")
+@section("title2", "Create Thread")
 @section('content')
 
 
@@ -14,25 +16,23 @@
       @endif
     </div>
     <div class="row">
-
-      @if (isset($tid) && isset($aid) && isset($prevAns))
-      <p>
-
-      <i>
-        <i class="material-icons prefix tiny">textsms</i> &nbsp;&nbsp;
-        {{{$prevAns->content}}} - <b>By {{ $prevAns->username}}</b></i>
-      </p>
+      @if (isset($subid))
 
 
     <div class="card col s12 " >
 
-      <form class="" action="/answer/{{$tid}}/{{$aid}}" method="post">
+      <form class="" action="/createthread/{{$subid}}" method="post">
         {!! csrf_field() !!}
         <div class="row">
           <div class="input-field col s7">
+            <i class="material-icons prefix">label</i>
+              <input id="thread" name="threadname" type="text" class="validate">
+              <label for="thread" data-error="!" data-success="ok">Thread Name</label>
+          </div>
+          <div class="input-field col s7">
             <i class="material-icons prefix">mode_edit</i>
-            <textarea name="content" id="textarea1" class="materialize-textarea"></textarea>
-            <label for="textarea1">Your answer</label>
+            <textarea name="description" id="textarea1" class="materialize-textarea"></textarea>
+            <label for="textarea1">Your question</label>
           </div>
           <div class="col s1"></div>
           <div class="input-field col s3">

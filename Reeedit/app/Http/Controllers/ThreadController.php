@@ -75,7 +75,7 @@ class ThreadController extends Controller
   if(!Session::has('user')){
       $thread = \App\Models\Thread::GetThreadById($tid);
       return Redirect::back()
-                        ->with('carderror', 'Please do not exceed 512 char')
+                        ->with('carderror', 'Log in to answer')
                         ->withInput();
     }
     $validator = Validator::make($request->all(), [
@@ -90,6 +90,41 @@ class ThreadController extends Controller
       $content = $request->input("content");
       if (\App\Models\Thread::answerTo($tid, $aid, $content))
         return ThreadController::viewThreadPage($tid);
+      else {
+        return view('welcome')->with('carderror', "Error");
+      }
+
+    }
+
+
+  }
+  public function formCreateThread($sub){
+    if(!Session::has('user'))
+      return view('createthread')->with('subid', $sub)->with('carderror', 'Please log in to answer');
+    return view('createthread')->with('subid', $sub);
+
+  }
+  public function createThread(Request $request, $sid){
+
+  if(!Session::has('user')){
+      return Redirect::back()
+                        ->with('carderror', 'Please log in to create a thread')
+                        ->withInput();
+    }
+    $validator = Validator::make($request->all(), [
+      'threadname' => 'required|alphanum|max:80',
+      'description' => 'required|alphanum|max:512',
+    ]);
+
+    if ($validator->fails()) {
+      return Redirect::back()
+                        ->with('carderror', 'Please do not write too much caracter')
+                        ->withInput();
+    }else{
+      $desc = $request->input("description");
+      $tn = $request->input("threadname");
+      if (\App\Models\Thread::createThread($sid, $tn, $desc))
+        return ThreadController::threadsPage($sid);
       else {
         return view('welcome')->with('carderror', "Error");
       }
