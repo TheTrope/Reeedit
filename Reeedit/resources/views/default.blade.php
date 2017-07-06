@@ -61,7 +61,7 @@
       <a href="/welcome">Index</a>
       <a href="/signin">Sign In</a>
       <a href="/subs">Subs</a>
-      <a href="/signin">Top Threads</a>
+      <a href="/topthread">Top Threads</a>
 
     </li>
 

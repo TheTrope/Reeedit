@@ -34,6 +34,7 @@ Route::get('/logout', 'UserController@logout');
 Route::get('/subs', 'ThreadController@subsPage');
 Route::get('/threads/{id}', 'ThreadController@threadsPage');
 Route::get('/thread/{id}', 'ThreadController@viewThreadPage');
+Route::get('/topthread', 'ThreadController@topthread');
 
 // Votes routes
 Route::get('/thread/{id}/tvoteup', 'ThreadController@threadVoteUp');
@@ -48,3 +49,6 @@ Route::post('/answer/{tid}/{aid}', 'ThreadController@answerTo');
 // -- Threads
 Route::get('/createthread/{sid}', 'ThreadController@formCreateThread');
 Route::post('/createthread/{sid}', 'ThreadController@createthread');
+// -- Subs
+Route::get('/createsub', 'ThreadController@formCreateSub');
+Route::post('/createsub', 'ThreadController@createSub');

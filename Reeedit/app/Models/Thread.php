@@ -101,11 +101,14 @@ use Illuminate\Support\Facades\DB;
     public static function getAnswer($id){
       $ans = DB::table('answers')
                   ->join('users', 'answers.userId', '=', 'users.id')
-                  ->select('answers.content', 'users.username')
+                  ->join('threads', 'answers.threadId', '=', 'threads.id')
+                  ->select('answers.content', 'users.username', 'threads.description')
                   ->where('answers.id', '=', $id)
                   ->get();
 
-      return (isset($ans[0])? $ans[0] : null);
+      $res = (isset($ans[0])? $ans[0] : null);
+
+      return $res;
     }
     public static function answerTo($tid, $aid, $content){
       $res = DB::insert('insert into answers (userId, threadid, content, fromAnswerId) values
@@ -136,7 +139,29 @@ use Illuminate\Support\Facades\DB;
       ]);
       return $res;
     }
+    public static function createSub($subname, $desc){
+      $res = DB::insert('insert into subsForums (author, name, description) values
+      (:usr, :subname, :desc)', [
+        'usr' => Session::get('user')->id,
+        'subname' => $subname,
+        'desc' => $desc
+      ]);
+      return $res;
 
+    }
+    public static function getTop(){
+      $threads = DB::table('threads')
+              ->leftjoin('subsForums', 'threads.subId', '=', 'subsForums.id')
+              ->leftJoin('threadVotes', 'threads.id', '=', 'threadVotes.threadId')
+              ->leftJoin('answers', 'threads.id', '=', 'answers.threadId')
+              ->select('threads.*', 'subsForums.name as subName', 'answers.content as content', DB::raw('cast(sum(threadVotes.value) as signed) as votes'))
+              ->where('answers.fromAnswerId', '=', NULL)
+              ->groupBy('threads.id', 'answers.content')
+              ->orderBy('votes', 'desc')
+              ->limit(5)
+              ->get();
+      return $threads;
+    }
 
 }
 

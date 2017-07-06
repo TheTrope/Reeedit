@@ -79,7 +79,7 @@ class ThreadController extends Controller
                         ->withInput();
     }
     $validator = Validator::make($request->all(), [
-      'content' => 'required|alphanum|max:512',
+      'content' => 'required|max:512',
     ]);
 
     if ($validator->fails()) {
@@ -112,8 +112,8 @@ class ThreadController extends Controller
                         ->withInput();
     }
     $validator = Validator::make($request->all(), [
-      'threadname' => 'required|alphanum|max:80',
-      'description' => 'required|alphanum|max:512',
+      'threadname' => 'required|max:80',
+      'description' => 'required|max:512',
     ]);
 
     if ($validator->fails()) {
@@ -132,5 +132,52 @@ class ThreadController extends Controller
     }
 
 
+  }
+
+  public function formCreateSub(){
+    if(!(Session::has('user') && Session::get('user')->role == 'ADMIN'))
+      return view('subs')
+            ->with('subs', \App\Models\Thread::GetSubs())
+            ->with('carderror', 'You are not allowed to acces this page');
+    return view('createsub');
+
+  }
+  public function createSub(Request $request){
+
+  if(!(Session::has('user') && Session::get('user')->role == 'ADMIN')){
+      return view('subs')
+            ->with('subs', \App\Models\Thread::GetSubs())
+            ->with('carderror', 'You are not allowed to acces this page');
+    }
+    $validator = Validator::make($request->all(), [
+      'sub' => 'required|max:80',
+      'description' => 'required|max:512',
+    ]);
+
+    if ($validator->fails()) {
+      return Redirect::back()
+                        ->with('carderror', 'Please do not write too much caracter')
+                        ->withInput();
+    }else{
+      $desc = $request->input("description");
+      $sub = $request->input("sub");
+      if (\App\Models\Thread::createSub($sub, $desc))
+      return view('subs')
+            ->with('subs', \App\Models\Thread::GetSubs())
+            ->with('carderror', 'Sub created');
+      else {
+      return view('subs')
+            ->with('subs', \App\Models\Thread::GetSubs())
+            ->with('carderror', 'Error');
+      }
+
+    }
+
+
+  }
+
+  public function topthread(){
+      $data = \App\Models\Thread::getTop();
+      return view('topthreads')->with('threads', $data);
   }
 }
