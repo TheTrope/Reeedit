@@ -10,10 +10,21 @@ use Session;
 class ThreadController extends Controller
 {
 
+  // ================ SUBS ================ //
+
   public function subsPage(Request $request) {
     $subs = \App\Models\Thread::GetSubs();
     return view("subs")->with("subs", $subs);
   }
+
+
+
+
+
+
+
+  // ================ THREADS ================ //
+
   public function threadsPage($idsubs) {
     $data = \App\Models\Thread::GetThreads($idsubs);
     return view("threads")->with("data", $data);
@@ -22,6 +33,14 @@ class ThreadController extends Controller
     $thread = \App\Models\Thread::GetThreadById($id);
     return view('viewThread')->with('data', $thread);
   }
+
+
+
+
+
+
+
+  // ================ VOTES ================ //
   public function threadVoteUp($id){
     if(!Session::has('user')){
       $thread = \App\Models\Thread::GetThreadById($id);
@@ -61,6 +80,15 @@ class ThreadController extends Controller
     $thread = \App\Models\Thread::GetThreadById($id);
     return view('viewThread')->with('data', $thread);
   }
+
+
+
+
+
+
+
+
+  // ================ FORMS ================ //
 
   public function formAnswerTo($tid, $aid){
     if(!Session::has('user'))
@@ -175,6 +203,13 @@ class ThreadController extends Controller
 
 
   }
+
+
+
+
+
+
+  // ================ OTHERS ================ //
 
   public function topthread(){
       $data = \App\Models\Thread::getTop();
