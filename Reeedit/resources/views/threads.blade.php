@@ -6,8 +6,10 @@
 <div class="row">
   <div class="card-panel">
     <div class="card-content">
+
+      {{ var_dump($data) }}
       <div class="right-align teal-text">
-        <a href="/createthread"><b>+ Thread</b></a>
+        <a href="/createthread/{{ $data['sub']->id }}"><b>+ Thread</b></a>
       </div>
       @foreach ($data['threads'] as $thread)
       <a href="/thread/{{ $thread->id }}">
