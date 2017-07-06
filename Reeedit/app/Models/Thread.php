@@ -47,33 +47,36 @@ use Illuminate\Support\Facades\DB;
     public static function GetThreadById($id){
       $usr = ((Session::has('user')? Session::get('user')->id : -1 ));
       $thread = DB::select('select *, ifnull(myVotes.value, 0) as myVote from (
-        select *, cast(sum(threadVotes.value) as signed) as votes from (
-          select threads.*, users.username as tauthor, answers.id as start, answers.fromAnswerId, subsForums.name as subName, answers.content, answers.id as startAnswer from threads
-          join subsForums on threads.subId = subsForums.id join answers on threads.id = answers.threadId
-          join users on threads.author = users.id where answers.fromAnswerId is NULL and threads.id = :id) as t left join threadVotes on t.id = threadVotes.threadId group by t.id) as d join threadVotes as myVotes on d.id = myVotes.threadId and myVotes.userId = '.$usr.'
+                              select *, cast(sum(threadVotes.value) as signed) as votes from (
+                                select threads.*, users.username as tauthor, answers.id as start, answers.fromAnswerId,
+                                subsForums.name as subName, answers.content, answers.id as startAnswer from threads
+                                join subsForums on threads.subId = subsForums.id join answers on threads.id = answers.threadId
+                                left join users on threads.author = users.id where answers.fromAnswerId is NULL and threads.id = :id) as t
+                              left join threadVotes on t.id = threadVotes.threadId group by t.id) as d
+                            left join threadVotes as myVotes on d.id = myVotes.threadId and myVotes.userId = '.$usr.'
 ', ["id" => $id]);
 
 
       $answers = DB::select("
-      select id, content, fromAnswerId, username, createdAt, threadId, votes, ifnull(answerVotes.value, 0) as myVote
-      from
-      (
-        select id, content, fromAnswerId, username, createdAt, threadId, ifnull(cast(sum(answerVotes.value) as signed), 0) as votes from
+        select id, content, fromAnswerId, username, createdAt, threadId, votes, ifnull(answerVotes.value, 0) as myVote
+        from
         (
-          select data.id, content, fromAnswerId, username, data.createdAt, data.threadId from
+          select id, content, fromAnswerId, username, createdAt, threadId, ifnull(cast(sum(answerVotes.value) as signed), 0) as votes from
           (
-              select  *
-              from    (select * from answers
-              order by fromAnswerId, id) sorted, (select @pv := :start) initialisation
-              where   find_in_set(fromAnswerId, @pv) > 0
-              and     @pv := concat(@pv, ',', id)) as data
-              , users
-              where data.userId = users.id
-        ) as finalData
-        left join answerVotes on finalData.id = answerVotes.answerId
-        group by finalData.id
-      ) as reallyNowItsFinalData
-      left join answerVotes on reallyNowItsFinalData.id = answerVotes.answerId and answerVotes.userId = :idusr
+            select data.id, content, fromAnswerId, username, data.createdAt, data.threadId from
+            (
+                select  *
+                from    (select * from answers
+                order by fromAnswerId, id) sorted, (select @pv := :start) initialisation
+                where   find_in_set(fromAnswerId, @pv) > 0
+                and     @pv := concat(@pv, ',', id)) as data
+                , users
+                where data.userId = users.id
+          ) as finalData
+          left join answerVotes on finalData.id = answerVotes.answerId
+          group by finalData.id
+        ) as reallyNowItsFinalData
+        left join answerVotes on reallyNowItsFinalData.id = answerVotes.answerId and answerVotes.userId = :idusr
         ", ["start" => $thread[0]->start, "idusr" => ((Session::has('user'))? Session::get('user')->id : -1 )]);
       $order = Thread::orderAnswers($thread[0]->start, $answers, 0);
       $result = ['thread' => $thread[0], 'answers' => $order];
@@ -93,6 +96,27 @@ use Illuminate\Support\Facades\DB;
       $vote = DB::insert("INSERT INTO answerVotes (userId, answerId, value) VALUES (:usr, :ans, :val ) ON DUPLICATE KEY UPDATE value = :valcp;",
       ["usr" => Session::get('user')->id, "ans" => $ans, "val" => $val, "valcp" => $val]);
 
+    }
+
+    public static function getAnswer($id){
+      $ans = DB::table('answers')
+                  ->join('users', 'answers.userId', '=', 'users.id')
+                  ->select('answers.content', 'users.username')
+                  ->where('answers.id', '=', $id)
+                  ->get();
+
+      return (isset($ans[0])? $ans[0] : null);
+    }
+    public static function answerTo($tid, $aid, $content){
+      $res = DB::insert('insert into answers (userId, threadid, content, fromAnswerId) values
+      (:usr, :tid, :content, :aid)',
+      [
+        'usr' => Session::get('user')->id,
+        'tid' => $tid,
+        'aid' => $aid,
+        'content' => $content
+      ]);
+      return $res;
     }
 
 

@@ -62,4 +62,40 @@ class ThreadController extends Controller
     return view('viewThread')->with('data', $thread);
   }
 
+  public function formAnswerTo($tid, $aid){
+    if(!Session::has('user'))
+    return view('answer')->with('tid', $tid)->with('aid', $aid)->with('prevAns',
+      \App\Models\Thread::GetAnswer($aid))->with('carderror', 'Please log in to answer');
+    return view('answer')->with('tid', $tid)->with('aid', $aid)->with('prevAns',
+      \App\Models\Thread::GetAnswer($aid));
+
+  }
+  public function answerTo(Request $request, $tid, $aid){
+
+  if(!Session::has('user')){
+      $thread = \App\Models\Thread::GetThreadById($tid);
+      return Redirect::back()
+                        ->with('carderror', 'Please do not exceed 512 char')
+                        ->withInput();
+    }
+    $validator = Validator::make($request->all(), [
+      'content' => 'required|alphanum|max:512',
+    ]);
+
+    if ($validator->fails()) {
+      return Redirect::back()
+                        ->with('carderror', 'Please do not exceed 512 char')
+                        ->withInput();
+    }else{
+      $content = $request->input("content");
+      if (\App\Models\Thread::answerTo($tid, $aid, $content))
+        return ThreadController::viewThreadPage($tid);
+      else {
+        return view('welcome')->with('carderror', "Error");
+      }
+
+    }
+
+
+  }
 }

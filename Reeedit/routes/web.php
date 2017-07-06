@@ -35,3 +35,5 @@ Route::get('/thread/{id}/tvotedown', 'ThreadController@threadVoteDown');
 Route::get('/thread/{id}/votedown/{ans}', 'ThreadController@answerVoteDown');
 Route::get('/thread/{id}/voteup/{ans}', 'ThreadController@answerVoteUp');
 Route::get('/logout', 'UserController@logout');
+Route::get('/answer/{tid}/{aid}', 'ThreadController@formAnswerTo');
+Route::post('/answer/{tid}/{aid}', 'ThreadController@answerTo');

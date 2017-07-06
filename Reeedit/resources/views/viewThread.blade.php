@@ -8,7 +8,6 @@
 <div class="row">
   <div class="card-panel teal lighten-2">
     <div class="row">
-      {{ var_dump($data['thread'])}}
       <div class="card">
         <div class="card-content">
         <span class="card-title">
@@ -31,9 +30,10 @@
                 @else
                   <a href="/thread/{{ $data['thread']->id }}/tvotedown"><i class="material-icons tiny grey-text">thumb_down</i></a>
                 @endif
+                <a href="/answer/{{ $data['thread']->id }}/{{ $data['thread']->start }}" style="teal"><b>+</b></a>
                 </div>
                 <div class="col s6 right-align">
-                  By <b>{{$data['thread']->tauthor}} </b> on {{$data['thread']->createdAt}}
+                  By <b>{{{$data['thread']->tauthor}}} </b> on {{$data['thread']->createdAt}}
                 </div>
             </div>
 
@@ -52,7 +52,7 @@
         <div class="card col s12">
           @endif
             <div class="card-content">
-             &nbsp;&nbsp;&nbsp;&nbsp;{{$answer['data']->content}}
+             &nbsp;&nbsp;&nbsp;&nbsp;{{{$answer['data']->content}}}
             </div>
             <div class="row"  style="margin: 5px">
 
@@ -68,9 +68,10 @@
                 @else
                   <a href="/thread/{{ $data['thread']->id }}/votedown/{{ $answer['data']->id }}"><i class="material-icons tiny grey-text">thumb_down</i></a>
                 @endif
+                <a href="/answer/{{ $data['thread']->id }}/{{ $answer['data']->id }}" style="teal"><b>+</b></a>
                 </div>
                 <div class="col s6 right-align">
-                  By <b>{{$answer['data']->username}} </b> on {{$answer['data']->createdAt}}
+                  By <b>{{{$answer['data']->username}}} </b> on {{$answer['data']->createdAt}}
                 </div>
             </div>
         </div>
