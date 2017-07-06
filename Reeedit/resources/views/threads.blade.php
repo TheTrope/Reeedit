@@ -6,6 +6,9 @@
 <div class="row">
   <div class="card-panel">
     <div class="card-content">
+      <div class="right-align teal-text">
+        <a href="/createthread"><b>+ Thread</b></a>
+      </div>
       @foreach ($data['threads'] as $thread)
       <a href="/thread/{{ $thread->id }}">
         <div class="card blue-grey darken-1 ">
