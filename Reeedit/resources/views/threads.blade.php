@@ -7,7 +7,6 @@
   <div class="card-panel">
     <div class="card-content">
 
-      {{ var_dump($data) }}
       <div class="right-align teal-text">
         <a href="/createthread/{{ $data['sub']->id }}"><b>+ Thread</b></a>
       </div>
@@ -19,7 +18,7 @@
             <span class="card-title">{{ $thread->name }}
 
                 @if($thread->votes != 0)
-                <span class="badge teal white-text">
+                <span class="badge {{($thread->votes < 0) ? 'red lighten-2' : 'teal'}} white-text">
                   {{ $thread->votes }}
                   Votes
                 </span>
